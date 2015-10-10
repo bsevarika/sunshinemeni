@@ -1,5 +1,7 @@
 package com.example.android.sunshine.app;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -99,7 +101,7 @@ public class ForecastFragment extends Fragment {
          * Fortunately parsing is easy:  constructor takes the JSON string and converts it
          * into an Object hierarchy for us.
          */
-        private String[] getWeatherDataFromJson(String forecastJsonStr)
+        public String[] getWeatherDataFromJson(String forecastJsonStr)
                 throws JSONException {
 
             // These are the names of the JSON objects that need to be extracted.
@@ -158,6 +160,28 @@ public class ForecastFragment extends Fragment {
             for (String s : bazaArray) {
                 Log.i(LOG_TAG, "Ponuda: " + s);
             }
+
+
+
+            FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(getContext());
+// Gets the data repository in write mode
+            SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+// Create a new map of values, where column names are the keys
+            ContentValues values = new ContentValues();
+
+            values.put("entryid", 1);
+            values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_TITLE, bazaArray[4]);
+            values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_SUBTITLE, "sadrzaj");
+
+            // Insert the new row, returning the primary key value of the new row
+            long newRowId;
+            newRowId = db.insert(
+                    FeedReaderContract.FeedEntry.TABLE_NAME,
+                    null,
+                    values);
+
+
             return bazaArray;
 
         }
@@ -272,4 +296,8 @@ public class ForecastFragment extends Fragment {
             }
         }
     }
+
+public void upisivanjeUBazu(){
+
+        }
 }
