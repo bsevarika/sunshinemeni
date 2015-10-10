@@ -215,7 +215,8 @@ public class ForecastFragment extends Fragment {
                 // Construct the URL for the OpenWeatherMap query
                 // Possible parameters are avaiable at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
-                URL url = new URL("http://192.168.1.27/xampp/json.html");
+                //URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=Banjaluka&mode=json&units=metric&cnt=7");
+                URL url = new URL("http://iad.duckdns.org:5000/forecast");
 
                  /*
                     final String FORECAST_BASE_URL =
