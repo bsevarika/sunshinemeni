@@ -3,7 +3,6 @@ package com.example.android.sunshine.app;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,6 +24,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 /**
  * Created by Bojan on 3.10.2015.
@@ -133,6 +133,38 @@ public class ForecastFragment extends Fragment {
             final String OWM_MIN = "min";
             final String OWM_DESCRIPTION = "main";
 
+            //Moj kod
+            final String LISTA_ISPISVANJE = "ispisivanje";
+            final String KATEGORIJA = "kategorija";
+            final String ID_SLIKE = "idSlike";
+            final String URL_SLIKE = "urlSlike";
+            final String TEXT_SLIKE = "textSlike";
+            final String LISTA = "lista";
+            final String PONUDA = "ponuda";
+            final String CIJENA = "cijena";
+            final String OPIS = "opis";
+            final String URL_DESNA_SLIKA = "urlDesnaSlika";
+
+
+            JSONObject ispisivanjeJson = new JSONObject(forecastJsonStr);
+            JSONArray ispisivanjeArray = ispisivanjeJson.getJSONArray(LISTA_ISPISVANJE);
+
+            ArrayList<String> rezultat = new ArrayList<String>();
+            for(int j = 0; j < ispisivanjeArray.length(); j++) {
+                JSONObject ispisObject = ispisivanjeArray.getJSONObject(j);
+                JSONArray ponudaArray = ispisObject.getJSONArray(LISTA);
+                String[] resultStrs2 = new String[ponudaArray.length()];
+                    for(int k = 0; k < ponudaArray.length(); k++) {
+                        JSONObject ponudaObject = ponudaArray.getJSONObject(k);
+                        String ponuda = ponudaObject.getString("ponuda");
+                        resultStrs2[k] = ponuda;
+                        rezultat.add(resultStrs2[k]);
+                    }
+
+            }
+            String[] resultStrs1 = new String[rezultat.size()];
+            resultStrs1 = rezultat.toArray(resultStrs1);
+/*
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
             JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 
@@ -183,12 +215,13 @@ public class ForecastFragment extends Fragment {
 
                 highAndLow = formatHighLows(high, low);
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
-            }
 
-            for (String s : resultStrs) {
-                Log.i(LOG_TAG, "Forecast entry: " + s);
             }
-            return resultStrs;
+*/
+            for (String s : resultStrs1) {
+                Log.i(LOG_TAG, "Ponuda: " + s);
+            }
+            return resultStrs1;
 
         }
 
@@ -215,8 +248,8 @@ public class ForecastFragment extends Fragment {
                 // Construct the URL for the OpenWeatherMap query
                 // Possible parameters are avaiable at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
-                //URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=Banjaluka&mode=json&units=metric&cnt=7");
-                URL url = new URL("http://iad.duckdns.org:5000/forecast");
+                URL url = new URL("http://192.168.1.103/xampp/json.html");
+                //URL url = new URL("http://iad.duckdns.org:5000/forecast");
 
                  /*
                     final String FORECAST_BASE_URL =
