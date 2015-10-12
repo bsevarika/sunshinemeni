@@ -1,5 +1,8 @@
 package com.example.android.sunshine.app;
 
+import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -18,7 +21,9 @@ import android.widget.ListView;
 public class ForecastFragment extends Fragment {
 
     public ArrayAdapter<String> adapter;
-    private FeedReaderDbHelper dbHelper;
+    //private FeedReaderDbHelper dbHelper;
+    //Database helper instance
+   private static ForecastFragment _instance;
 
     public ForecastFragment() {
 
@@ -27,7 +32,7 @@ public class ForecastFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dbHelper = FeedReaderDbHelper.getInstance(getContext());
+        //dbHelper = FeedReaderDbHelper.getInstance(getContext());
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
     }
@@ -36,6 +41,14 @@ public class ForecastFragment extends Fragment {
         FetchWeatherTask weatherTask = new FetchWeatherTask();
         weatherTask.execute("");
     }
+
+    private void InsertIntoDb() {
+        InsertDbTask DbTask = new InsertDbTask();
+        DbTask.execute();
+    }
+
+
+
 
     @Override
     public void onStart() {
@@ -57,7 +70,7 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
         //Poziva metodu koja upisuje sadrzaj u bazu nakon pritiska na refresh dugme
-            dbHelper.addContentToDb();
+            InsertIntoDb();
             Log.v(ForecastFragment.class + "", "Refresh button pressed");
           //  FetchWeatherTask weatherTask = new FetchWeatherTask();
           //  weatherTask.execute("");
@@ -78,6 +91,44 @@ public class ForecastFragment extends Fragment {
         listView.setAdapter(adapter);
         return rootView;
     }
+
+    public class InsertDbTask extends AsyncTask<Void,Void,Boolean> {
+
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            try {
+
+                String[] data = FetchWeatherTask.bazaArray;
+
+                FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(getContext());
+                // Gets the data repository in write mode
+                SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+                // Create a new map of values, where column names are the keys
+                ContentValues values = new ContentValues();
+
+                values.put("entryid", 2);
+                values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_TITLE, data[5]);
+                values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_SUBTITLE, "BanjaLuka");
+
+                // Insert the new row, returning the primary key value of the new row
+                long newRowId;
+                newRowId = db.insert(
+                        FeedReaderContract.FeedEntry.TABLE_NAME,
+                        null,
+                        values);
+                db.close();
+
+                return true;
+            } catch (Exception e) {
+
+                return false;
+            }
+        }
+    }
+
 
 
 }
