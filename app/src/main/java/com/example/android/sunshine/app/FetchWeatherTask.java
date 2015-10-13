@@ -20,7 +20,7 @@ import java.util.ArrayList;
  */
 public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
-    public static String[] bazaArray;
+    public static String[] JSONforDbArray;
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
     /**
@@ -83,13 +83,13 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
         }
         //Niz elemenata polja ponuda u JSON-u
-       bazaArray = new String[bazaList.size()];
-        bazaArray = bazaList.toArray(bazaArray);
+        JSONforDbArray = new String[bazaList.size()];
+        JSONforDbArray = bazaList.toArray(JSONforDbArray);
 
-        for (String s : bazaArray) {
-            Log.i(LOG_TAG, "Ponuda: " + s);
+        for (String s : JSONforDbArray) {
+            Log.i(LOG_TAG, "JSONforDbArray: " + s);
         }
-        return bazaArray;
+        return JSONforDbArray;
     }
 
     @Override
@@ -115,7 +115,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
             // Construct the URL for the OpenWeatherMap query
             // Possible parameters are avaiable at OWM's forecast API page, at
             // http://openweathermap.org/API#forecast
-            URL url = new URL("http://192.168.1.45/xampp/json.html");
+            URL url = new URL("http://192.168.1.27/xampp/json.html");
             //URL url = new URL("http://iad.duckdns.org:5000/forecast");
 
                  /*
