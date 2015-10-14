@@ -32,6 +32,26 @@ public class ForecastFragment extends Fragment {
     public static String[] opisArray;
     public static String[] urlDesnaSLikaArray;
 
+    public static String[] ponudaHrana1Array;
+    public static String[] cijenaHrana1Array;
+    public static String[] opisHrana1Array;
+    public static String[] urlDesnaSLikaHrana1Array;
+
+    public static String[] ponudaHrana2Array;
+    public static String[] cijenaHrana2Array;
+    public static String[] opisHrana2Array;
+    public static String[] urlDesnaSLikaHrana2Array;
+
+    public static String[] ponudaHrana3Array;
+    public static String[] cijenaHrana3Array;
+    public static String[] opisHrana3Array;
+    public static String[] urlDesnaSLikaHrana3Array;
+
+    public static String[] ponudaHrana4Array;
+    public static String[] cijenaHrana4Array;
+    public static String[] opisHrana4Array;
+    public static String[] urlDesnaSLikaHrana4Array;
+
     public ArrayAdapter<String> adapter;
 
     public ForecastFragment() {
@@ -106,7 +126,7 @@ public class ForecastFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        ReadFromDb();
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textview);
@@ -158,18 +178,15 @@ public class ForecastFragment extends Fragment {
     //AsynkTask za citanje iz baze
     public class ReadFromDbTask extends AsyncTask<Void,Void,Boolean> {
 
-
-
         @Override
         protected Boolean doInBackground(Void... params) {
             FeedReaderDbHelper mDbHelper = new FeedReaderDbHelper(getContext());
             try {
 
-
                 SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-// Define a projection that specifies which columns from the database
-// you will actually use after this query.
+                // Define a projection that specifies which columns from the database
+                // you will actually use after this query.
                 String[] projection = {
                         FeedReaderContract.FeedEntry.COLUMN_NAME_KATEGORIJA,
                         FeedReaderContract.FeedEntry.COLUMN_NAME_ID_SLIKE,
@@ -181,10 +198,11 @@ public class ForecastFragment extends Fragment {
                         FeedReaderContract.FeedEntry.COLUMN_NAME_URL_DESNA_SLIKA
                         };
 
-// How you want the results sorted in the resulting Cursor
+                // How you want the results sorted in the resulting Cursor
                 String sortOrder =
                         FeedReaderContract.FeedEntry.COLUMN_NAME_PONUDA + " ASC";
 
+                //Kursor za citavu bazu
                 Cursor cursor = db.query(
                         FeedReaderContract.FeedEntry.TABLE_NAME,  // The table to query
                         projection,                               // The columns to return
@@ -219,21 +237,81 @@ public class ForecastFragment extends Fragment {
                     while (cursor.moveToNext());
 
                 }
+                    cursor.close();
 
-                ponudaArray  = new String[ponudaList.size()];
-                ponudaArray = ponudaList.toArray(ponudaArray);
 
-                for (String s : ponudaArray) {
-                    Log.i(ForecastFragment.class + "", "Ponuda: " + s);
+
+                /*
+                * Nizovi za prva sliku - HRANA
+                */
+                String[] projectionHrana1 = {
+
+                        FeedReaderContract.FeedEntry.COLUMN_NAME_PONUDA,
+                        FeedReaderContract.FeedEntry.COLUMN_NAME_CIJENA,
+                        FeedReaderContract.FeedEntry.COLUMN_NAME_OPIS,
+                        FeedReaderContract.FeedEntry.COLUMN_NAME_URL_DESNA_SLIKA
+                };
+
+
+                String kolone = "kategorija=? AND idslike=?";
+                String[] where = {"hrana","1"};
+
+                //Kursor za hranu - prva slika
+                    Cursor cursorHrana1 = db.query(
+                            FeedReaderContract.FeedEntry.TABLE_NAME,  // The table to query
+                            projectionHrana1,                                // The columns to return
+                            kolone,                                     // The columns for the WHERE clause
+                            where,                                   // The values for the WHERE clause
+                            null,                                     // don't group the rows
+                            null,                                     // don't filter by row groups
+                            sortOrder                                 // The sort order
+                    );
+
+                    ArrayList<String> ponudaHrana1List = new ArrayList<String>();
+                    ArrayList<String> cijenaHrana1List = new ArrayList<String>();
+                    ArrayList<String> opisHrana1List = new ArrayList<String>();
+                    ArrayList<String> urlDesnaSLikaHrana1List = new ArrayList<String>();
+                    if(cursorHrana1.moveToFirst()) {
+
+                        int i = 0;
+                        do {
+
+                            ponudaHrana1List.add(cursorHrana1.getString(i));
+                            cijenaHrana1List.add(cursorHrana1.getString(i + 1));
+                            opisHrana1List.add(cursorHrana1.getString(i + 2));
+                            urlDesnaSLikaHrana1List.add(cursorHrana1.getString(i + 3));
+
+                        }
+                        while (cursorHrana1.moveToNext());
+
+                    }
+
+                /*
+                 * Za provjeru izbrisati kad zavrsis
+                 */
+
+                ponudaHrana1Array  = new String[ponudaHrana1List.size()];
+                ponudaHrana1Array = ponudaHrana1List.toArray(ponudaHrana1Array);
+
+                for (String s : ponudaHrana1List) {
+                    Log.i(ForecastFragment.class + "", "Ponuda Hrana: " + s);
                 }
 
-                for (String s : ponudaArray) {
+                for (String s : ponudaHrana1List) {
                     adapter.add(s);
-
                 }
-                cursor.close();
-                db.close();
 
+                /*
+                 * Za provjeru izbrisati kad zavrsis
+                 */
+
+                cursorHrana1.close();
+
+                /*
+                * Kraj koda za nizove za prvu sliku - HRANA
+                */
+
+                db.close();
                 return true;
             } catch (Exception e) {
 

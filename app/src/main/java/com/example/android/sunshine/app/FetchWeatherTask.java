@@ -34,7 +34,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
             throws JSONException {
 
         // These are the names of the JSON objects that need to be extracted.
-        final String LISTA_ISPISVANJE = "ispisivanje";
+        final String LISTA_MENI = "meni";
         final String KATEGORIJA = "kategorija";
         final String ID_SLIKE = "idSlike";
         final String URL_SLIKE = "urlSlike";
@@ -47,7 +47,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
 
         JSONObject ispisivanjeJson = new JSONObject(forecastJsonStr);
-        JSONArray ispisivanjeArray = ispisivanjeJson.getJSONArray(LISTA_ISPISVANJE);
+        JSONArray ispisivanjeArray = ispisivanjeJson.getJSONArray(LISTA_MENI);
 
         ArrayList<String> bazaList = new ArrayList<String>();
         for(int i = 0; i < ispisivanjeArray.length(); i++) {
